@@ -1,0 +1,7 @@
+DB_USERNAME: your-db-username
+DB_PASSWORD: your-db-password
+BASE_URL: localhost
+DB_PORT: 5432
+DB_NAME: your-db-name
+SSL_MODE: disable
+PORT: 8080
