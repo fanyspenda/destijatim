@@ -1,0 +1,285 @@
+openapi: 3.0.3
+info:
+  title: DestiJatim
+  version: '1'
+  description: OpenAPI for Jawa Timur Destination
+  termsOfService: https://github.com/fanyspenda/destijatim
+  contact:
+    name: Idris & Fanny
+    url: https://github.com/fanyspenda/destijatim
+servers:
+  - description: DestiJatim RESTful API Server
+    url: https://{environment}.destijatim.com/api/v1
+    variables:
+      environment:
+        description: Server Environment
+        default: dev
+        enum:
+          - dev
+          - qa
+          - prod
+paths:
+  /destijatim:
+    get:
+      security:
+        - DestinationAuth: []
+      tags:
+        - Jawa Timur Destination
+      summary: Get all destination
+      description: Get all active destination by default
+      parameters:
+        - name: name
+          in: query
+          required: false
+          description: Filter destination by name
+          schema:
+            type: string
+            nullable: true
+            minLength: 1
+            maxLength: 100
+          examples:
+            Gunung Bromo:
+              description: Example name Gunung Bromo
+              value: Gunung Bromo
+            Gunung Semeru:
+              description: Example name Gunung Semeru
+              value: Gunung Semeru
+      responses:
+        '200':
+          description: Success get all destination
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayDestination'
+              examples:
+                success:
+                  description: Example success get all destination
+                  value:
+                    - id: '1'
+                      name: Gunung Bromo
+                      location: Pasuruan, Indonesia
+                      description: description
+                      thumbnail: thumbnail
+                      image: image
+                    - id: '2'
+                      name: Gunung Semeru
+                      location: Lumajang, Indonesia
+                      description: description
+                      thumbnail: thumbnail
+                      image: image
+    post:
+      security:
+        - DestinationAuth: []
+      tags:
+        - Destination
+      summary: Create new destination
+      description: Create new destination to database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateDestination'
+            examples:
+              paralayang:
+                description: Example create destination paralayang
+                value:
+                  name: paralayang
+                  location: batu, Indonesia
+                  description: description
+                  thumbnail: thumbnail
+                  image: image
+              jatimpark:
+                description: Example create destination jatimpark
+                value:
+                  name: jatimpark
+                  location: batu, Indonesia
+                  description: description
+                  thumbnail: thumbnail
+                  image: image
+      responses:
+        '200':
+          description: Success create destination
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Destinations'
+              examples:
+                paralayang:
+                  description: Example create destination paralayang
+                  value:
+                    name: paralayang
+                    location: batu, Indonesia
+                    description: description
+                    thumbnail: thumbnail
+                    image: image
+                jatimpark:
+                  description: Example create destination jatimpark
+                  value:
+                    name: jatimpark
+                    location: batu, Indonesia
+                    description: description
+                    thumbnail: thumbnail
+                    image: image
+  /destination/{destinationId}:
+    put:
+      security:
+        - DestinationAuth: []
+      tags:
+        - Destination
+      summary: Update existing destination
+      description: Update existing destination in database
+      parameters:
+        - $ref: '#/components/parameters/Destination'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateDestination'
+            examples:
+                paralayang:
+                  description: Example create destination paralayang
+                  value:
+                    name: paralayang
+                    location: batu, Indonesia
+                    description: description
+                    thumbnail: thumbnail
+                    image: image
+                jatimpark:
+                  description: Example create destination jatimpark
+                  value:
+                    name: jatimpark
+                    location: batu, Indonesia
+                    description: description
+                    thumbnail: thumbnail
+                    image: image
+      responses:
+        '200':
+          description: Success update destination
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Destination'
+              examples:
+                paralayang:
+                  description: Success create destination paralayang
+                  value:
+                    name: paralayang
+                    location: batu, Indonesia
+                    description: description
+                    thumbnail: thumbnail
+                    image: image
+                jatimpark:
+                  description: Success create destination jatimpark
+                  value:
+                    name: jatimpark
+                    location: batu, Indonesia
+                    description: description
+                    thumbnail: thumbnail
+                    image: image
+    delete:
+      security:
+        - DestinationAuth: []
+      tags:
+        - Destination
+      summary: Delete existing destination
+      description: Delete existing destination in database
+      parameters:
+        - $ref: '#/components/parameters/Destination'
+      responses:
+        '200':
+          description: Success delete destination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              examples:
+                success:
+                  description: Success delete destination
+                  value:
+                    success: true
+        '404':
+          description: Failed delete not found destination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              examples:
+                failed:
+                  description: Failed delete destination
+                  value:
+                    success: false
+components:
+  securitySchemes:
+    DestinationAuth:
+      description: Authentication for Destination RESTful API
+      type: apiKey
+      in: header
+      name: X-API-Key
+  parameters:
+    DestinationId:
+      name: destinationId
+      in: path
+      required: true
+      description: Destination id for updated
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+      examples:
+        paralayang:
+          description: Success create destination paralayang
+          value:
+            name: paralayang
+            location: batu, Indonesia
+            description: description
+            thumbnail: thumbnail
+            image: image
+        jatimpark:
+          description: Success create destination jatimpark
+          value:
+            name: jatimpark
+            location: batu, Indonesia
+            description: description
+            thumbnail: thumbnail
+            image: image
+  schemas:
+    Destination:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+        thumbnail:
+          type: string
+        image:
+          type: string
+    CreateOrUpdateDestination:
+      type: object
+      properties:
+        name:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+        thumbnail:
+          type: string
+        image:
+          type: string
+    ArrayDestination:
+      type: array
+      items:
+        $ref: '#/components/schemas/Destination'
